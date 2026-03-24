@@ -160,7 +160,8 @@ class BookingReportService {
     }
 }
 
- void main(String[] args) {
+public class Main {
+    public static void main(String[] args) {
         System.out.println("Room Allocation Processing");
 
         RoomInventory inventory = new RoomInventory();
@@ -181,3 +182,4 @@ class BookingReportService {
 
         reportService.generateReport(history);
     }
+}
