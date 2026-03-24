@@ -124,26 +124,62 @@ class RoomAllocationService {
             inventory.updateAvailability(roomType, availability.get(roomType) - 1);
 
             System.out.println("Booking confirmed for Guest " + reservation.getGuestName() +
-                    ", Room ID: " + roomType+ "-" + nextNumber);
+                    ", Room ID: " + roomType + "-" + nextNumber);
         } else {
             System.out.println("No " + roomType + " Booking confirmed for Guest " + reservation.getGuestName());
         }
     }
 }
 
-void main(String[] args) {
+class BookingHistory {
+    private List<Reservation> confirmedReservations;
+
+    BookingHistory() {
+        confirmedReservations = new ArrayList<>();
+    }
+
+    public void addReservation(Reservation reservation) {
+        confirmedReservations.add(reservation);
+    }
+
+    public List<Reservation> getConfirmedReservations() {
+        return confirmedReservations;
+    }
+}
+
+class BookingReportService {
+    public void generateReport(BookingHistory history) {
+        System.out.println("Booking History and Reporting\n");
+        System.out.println("Booking History Report");
+
+        List<Reservation> list = history.getConfirmedReservations();
+
+        for (Reservation r : list) {
+            System.out.println("Guest: " + r.getGuestName() + ", Room Type: " + r.getRoomType());
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
         System.out.println("Room Allocation Processing");
 
         RoomInventory inventory = new RoomInventory();
         RoomAllocationService allocationService = new RoomAllocationService();
         BookingRequestQueue bookingQueue = new BookingRequestQueue();
+        BookingHistory history = new BookingHistory();
+        BookingReportService reportService = new BookingReportService();
 
         bookingQueue.addRequest(new Reservation("Abhi", "Single"));
-        bookingQueue.addRequest(new Reservation("Subha", "Single"));
+        bookingQueue.addRequest(new Reservation("Subha", "Double"));
         bookingQueue.addRequest(new Reservation("Vanmathi", "Suite"));
 
         while (bookingQueue.hasPendingRequests()) {
             Reservation next = bookingQueue.getNextRequest();
             allocationService.allocateRoom(next, inventory);
+            history.addReservation(next);
         }
+
+        reportService.generateReport(history);
     }
+}
